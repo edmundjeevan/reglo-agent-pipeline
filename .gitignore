@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+envio-indexer/node_modules/
+
+# secrets -- never commit these
+.env
+.env.save
+.demo-wallets.json
+
+# build output (regenerate with `npm run compile:fallback` / `npm test`, see README)
+artifacts/
+cache/
+
+# envio generated/local-dev state
+envio-indexer/.envio/
+envio-indexer/generated/
+
+# misc
+*.log
+.DS_Store
+
+# local tooling, not part of the project
+.claude/

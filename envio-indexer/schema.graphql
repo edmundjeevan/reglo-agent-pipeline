@@ -1,0 +1,42 @@
+type RegloAgentEscrow_AdviceRequested {
+  id: ID!
+  user: String!
+  agent: String!
+  payer: String!
+  fee: BigInt!
+}
+
+type RegloAgentEscrow_MandateFunded {
+  id: ID!
+  user: String!
+  agent: String!
+  oracle: String!
+  amount: BigInt!
+  agentShareBps: BigInt!
+  maxPerClaim: BigInt!
+  advisoryFee: BigInt!
+}
+
+type RegloAgentEscrow_MandateTopUp {
+  id: ID!
+  user: String!
+  amount: BigInt!
+}
+
+type RegloAgentEscrow_RemainingWithdrawn {
+  id: ID!
+  user: String!
+  amount: BigInt!
+}
+
+type RegloAgentEscrow_SavingsClaimed {
+  id: ID!
+  user: String!
+  agent: String!
+  jobId: String!
+  baselineCost: BigInt!
+  actualCost: BigInt!
+  savings: BigInt!
+  payout: BigInt!
+}
+

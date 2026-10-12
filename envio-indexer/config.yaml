@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: reglo-indexer
+disable_default_cross_chain: true
+chains:
+- id: 10143
+  start_block: 0
+  contracts:
+  - name: RegloAgentEscrow
+    address:
+    - "0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4"
+    events:
+    - event: AdviceRequested(address indexed user, address indexed agent, address indexed payer, uint256 fee)
+    - event: MandateFunded(address indexed user, address indexed agent, address indexed oracle, uint256 amount, uint16 agentShareBps, uint256 maxPerClaim, uint256 advisoryFee)
+    - event: MandateTopUp(address indexed user, uint256 amount)
+    - event: RemainingWithdrawn(address indexed user, uint256 amount)
+    - event: SavingsClaimed(address indexed user, address indexed agent, bytes32 indexed jobId, uint256 baselineCost, uint256 actualCost, uint256 savings, uint256 payout)
