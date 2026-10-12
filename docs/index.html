@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REGLO Agent — Live on Monad Testnet</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #121934;
+    --panel-border: #22305c;
+    --text: #e6ebff;
+    --dim: #8f9bc2;
+    --accent: #5ad1a0;
+    --accent2: #f5c56b;
+    --danger: #ff7a7a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(circle at top, #141b36 0%, var(--bg) 60%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 28px; }
+  header h1 { font-size: 1.6rem; margin: 0 0 6px; }
+  header p { color: var(--dim); margin: 4px 0; font-size: 0.95rem; }
+  .pill {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    background: rgba(90, 209, 160, 0.12); color: var(--accent);
+    font-size: 0.78rem; border: 1px solid rgba(90, 209, 160, 0.4);
+    margin-top: 6px;
+  }
+  .cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 14px; padding: 16px 18px;
+  }
+  .card .label { color: var(--dim); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card .value { font-size: 1.3rem; font-weight: 600; margin-top: 6px; word-break: break-all; }
+  .card .value.small { font-size: 0.95rem; }
+  .card a { color: var(--accent2); text-decoration: none; }
+  .card a:hover { text-decoration: underline; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--panel-border);
+    border-radius: 14px; padding: 18px; margin-bottom: 20px;
+  }
+  .panel h2 { margin: 0 0 4px; font-size: 1.05rem; }
+  .panel .sub { color: var(--dim); font-size: 0.82rem; margin-bottom: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; color: var(--dim); font-weight: 500; padding: 6px 8px; border-bottom: 1px solid var(--panel-border); }
+  td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .ev-name {
+    display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+  }
+  .ev-AdviceRequested { background: rgba(245, 197, 107, 0.15); color: var(--accent2); }
+  .ev-MandateFunded { background: rgba(90, 209, 160, 0.15); color: var(--accent); }
+  .ev-MandateTopUp { background: rgba(90, 209, 160, 0.15); color: var(--accent); }
+  .ev-SavingsClaimed { background: rgba(122, 162, 255, 0.18); color: #9ab4ff; }
+  .ev-RemainingWithdrawn { background: rgba(255, 122, 122, 0.15); color: var(--danger); }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.82rem; }
+  a.tx { color: var(--accent2); text-decoration: none; }
+  a.tx:hover { text-decoration: underline; }
+  .status { color: var(--dim); font-size: 0.85rem; margin-bottom: 10px; min-height: 1.2em; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  button {
+    background: rgba(90, 209, 160, 0.12); border: 1px solid rgba(90, 209, 160, 0.4);
+    color: var(--accent); padding: 7px 14px; border-radius: 8px; font-size: 0.82rem;
+    cursor: pointer;
+  }
+  button:hover { background: rgba(90, 209, 160, 0.22); }
+  button:disabled { opacity: 0.5; cursor: default; }
+  .empty { color: var(--dim); font-size: 0.88rem; padding: 10px 0; }
+  footer { text-align: center; color: var(--dim); font-size: 0.78rem; margin-top: 30px; line-height: 1.6; }
+  footer a { color: var(--accent2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .honest { background: rgba(255,255,255,0.03); border: 1px dashed var(--panel-border); border-radius: 10px; padding: 12px 14px; font-size: 0.82rem; color: var(--dim); }
+  .honest b { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>⚡ REGLO Agent — Live State</h1>
+    <p>An on-chain compute-scheduling agent that gets paid in MON for verifiably completing work during low-tariff / high-curtailment windows.</p>
+    <span class="pill">Reads Monad testnet directly in your browser · no backend · nothing mocked here</span>
+  </header>
+
+  <div class="cards">
+    <div class="card">
+      <div class="label">Contract</div>
+      <div class="value small mono" id="contractAddr">—</div>
+      <div style="margin-top:6px;"><a id="monadscanLink" href="#" target="_blank" rel="noopener">View on Monadscan ↗</a></div>
+    </div>
+    <div class="card">
+      <div class="label">Escrow balance</div>
+      <div class="value" id="balance">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Latest block</div>
+      <div class="value" id="latestBlock">—</div>
+    </div>
+    <div class="card">
+      <div class="label">Network</div>
+      <div class="value small">Monad Testnet<br><span class="mono" style="color:var(--dim);font-size:0.78rem;">chainId 10143</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Recent on-chain activity</h2>
+    <div class="sub">AdviceRequested, MandateFunded, MandateTopUp, SavingsClaimed, RemainingWithdrawn — read straight off the deployed <code>RegloAgentEscrow</code> contract.</div>
+    <div class="btns">
+      <button id="rescanBtn">Rescan from latest</button>
+      <button id="moreBtn">Scan further back</button>
+    </div>
+    <div class="status" id="status">Connecting to Monad testnet…</div>
+    <div id="eventsWrap"><div class="empty">No events loaded yet.</div></div>
+  </div>
+
+  <div class="panel honest">
+    <b>What this page actually does:</b> it opens a direct, read-only JSON-RPC connection from your browser to the public Monad testnet RPC and calls <code>eth_getBalance</code> / <code>eth_getLogs</code> against the real deployed contract address below. There is no server, no database, and no mocked data on this page — if the table is empty, it's because no matching events were found in the scanned block range yet, not because anything here is fake. The REGLO curtailment-tariff data and the agent's reasoning step are separate, off-chain components documented in the repo's README (clearly marked there as to what's real vs. simulated for the hackathon).
+  </div>
+
+  <footer>
+    Built for the Metropolis (Monad) hackathon ·
+    <a href="https://github.com/edmundjeevan/reglo-agent-pipeline" target="_blank" rel="noopener">Source on GitHub</a>
+    ·
+    <a id="footerMonadscan" href="#" target="_blank" rel="noopener">Contract on Monadscan</a>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var RPC_URL = "https://testnet-rpc.monad.xyz";
+  var CHAIN_ID = 10143;
+  var CONTRACT_ADDRESS = "0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4";
+  var EXPLORER_BASE = "https://testnet.monadscan.com";
+
+  var ABI = [
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"agent","type":"address"},{"indexed":true,"internalType":"address","name":"payer","type":"address"},{"indexed":false,"internalType":"uint256","name":"fee","type":"uint256"}],"name":"AdviceRequested","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"agent","type":"address"},{"indexed":true,"internalType":"address","name":"oracle","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},{"indexed":false,"internalType":"uint16","name":"agentShareBps","type":"uint16"},{"indexed":false,"internalType":"uint256","name":"maxPerClaim","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"advisoryFee","type":"uint256"}],"name":"MandateFunded","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"MandateTopUp","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RemainingWithdrawn","type":"event"},
+    {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":true,"internalType":"address","name":"agent","type":"address"},{"indexed":true,"internalType":"bytes32","name":"jobId","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"baselineCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"actualCost","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"savings","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"payout","type":"uint256"}],"name":"SavingsClaimed","type":"event"}
+  ];
+
+  var statusEl = document.getElementById("status");
+  var eventsWrap = document.getElementById("eventsWrap");
+  var rescanBtn = document.getElementById("rescanBtn");
+  var moreBtn = document.getElementById("moreBtn");
+
+  document.getElementById("contractAddr").textContent = CONTRACT_ADDRESS;
+  var scLink = EXPLORER_BASE + "/address/" + CONTRACT_ADDRESS;
+  document.getElementById("monadscanLink").href = scLink;
+  document.getElementById("footerMonadscan").href = scLink;
+
+  var provider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID);
+  var iface = new ethers.Interface(ABI);
+
+  var allDecoded = [];
+  var scannedFrom = null;
+  var latestAtScanStart = null;
+
+  function short(addr) {
+    return addr.slice(0, 6) + "…" + addr.slice(-4);
+  }
+
+  function fmtMon(wei) {
+    try { return ethers.formatEther(wei) + " MON"; } catch (e) { return "—"; }
+  }
+
+  function renderBalanceAndBlock() {
+    provider.getBalance(CONTRACT_ADDRESS).then(function (bal) {
+      document.getElementById("balance").textContent = fmtMon(bal);
+    }).catch(function () {
+      document.getElementById("balance").textContent = "unavailable";
+    });
+    provider.getBlockNumber().then(function (bn) {
+      document.getElementById("latestBlock").textContent = bn.toLocaleString();
+    }).catch(function () {});
+  }
+
+  function argToStr(name, val) {
+    if (name === "jobId") return short(val);
+    if (typeof val === "bigint") {
+      try { return ethers.formatEther(val) + " MON"; } catch (e) { return val.toString(); }
+    }
+    if (typeof val === "string" && val.startsWith("0x") && val.length === 42) return short(val);
+    return String(val);
+  }
+
+  function renderEvents() {
+    if (allDecoded.length === 0) {
+      eventsWrap.innerHTML = '<div class="empty">No matching events found in the scanned block range yet. Try "Scan further back".</div>';
+      return;
+    }
+    var rows = allDecoded.slice(0, 40).map(function (ev) {
+      var argsStr = Object.keys(ev.args)
+        .filter(function (k) { return isNaN(Number(k)); })
+        .map(function (k) { return k + "=" + argToStr(k, ev.args[k]); })
+        .join(", ");
+      var txUrl = EXPLORER_BASE + "/tx/" + ev.txHash;
+      return "<tr>" +
+        '<td><span class="ev-name ev-' + ev.name + '">' + ev.name + "</span></td>" +
+        '<td class="mono">' + ev.blockNumber.toLocaleString() + "</td>" +
+        '<td class="mono">' + argsStr + "</td>" +
+        '<td><a class="tx" href="' + txUrl + '" target="_blank" rel="noopener">' + short(ev.txHash) + " ↗</a></td>" +
+        "</tr>";
+    }).join("");
+    eventsWrap.innerHTML =
+      "<table><thead><tr><th>Event</th><th>Block</th><th>Details</th><th>Tx</th></tr></thead><tbody>" +
+      rows + "</tbody></table>";
+  }
+
+  function decodeLogs(logs) {
+    var out = [];
+    for (var i = 0; i < logs.length; i++) {
+      try {
+        var parsed = iface.parseLog(logs[i]);
+        if (!parsed) continue;
+        out.push({
+          name: parsed.name,
+          args: parsed.args,
+          blockNumber: logs[i].blockNumber,
+          txHash: logs[i].transactionHash
+        });
+      } catch (e) { /* not one of our events, skip */ }
+    }
+    return out;
+  }
+
+  function mergeAndSort(newDecoded) {
+    var seen = {};
+    allDecoded.concat(newDecoded).forEach(function (ev) {
+      seen[ev.txHash + ":" + ev.name + ":" + ev.blockNumber] = ev;
+    });
+    allDecoded = Object.keys(seen).map(function (k) { return seen[k]; });
+    allDecoded.sort(function (a, b) { return b.blockNumber - a.blockNumber; });
+  }
+
+  function scanBackwards(startBlock, maxChunks, onProgress) {
+    var to = startBlock;
+    var chunk = 10000;
+    var chunksDone = 0;
+    var floor = 0;
+
+    function step() {
+      if (to < floor || chunksDone >= maxChunks) {
+        return Promise.resolve(to);
+      }
+      var from = Math.max(floor, to - chunk + 1);
+      return provider.getLogs({ address: CONTRACT_ADDRESS, fromBlock: from, toBlock: to })
+        .then(function (logs) {
+          var decoded = decodeLogs(logs);
+          if (decoded.length) { mergeAndSort(decoded); renderEvents(); }
+          chunksDone++;
+          var nextTo = from - 1;
+          if (onProgress) onProgress(from, to, allDecoded.length, chunksDone, maxChunks);
+          to = nextTo;
+          return step();
+        })
+        .catch(function (err) {
+          if (chunk > 200) {
+            chunk = Math.floor(chunk / 4) || 200;
+            return step();
+          }
+          chunksDone++;
+          to = from - 1;
+          if (onProgress) onProgress(from, to, allDecoded.length, chunksDone, maxChunks);
+          return step();
+        });
+    }
+    return step();
+  }
+
+  function runInitialScan() {
+    statusEl.textContent = "Connecting to Monad testnet…";
+    rescanBtn.disabled = true;
+    moreBtn.disabled = true;
+    provider.getBlockNumber().then(function (latest) {
+      latestAtScanStart = latest;
+      statusEl.textContent = "Scanning recent blocks for contract activity…";
+      return scanBackwards(latest, 30, function (from, to, count, done, max) {
+        statusEl.textContent = "Scanned down to block " + from.toLocaleString() +
+          " (" + done + "/" + max + " chunks) — " + count + " event(s) found so far…";
+      });
+    }).then(function (reached) {
+      scannedFrom = reached;
+      statusEl.textContent = allDecoded.length
+        ? ("Showing " + Math.min(allDecoded.length, 40) + " of " + allDecoded.length +
+           " event(s), scanned back to block " + (reached + 1).toLocaleString() + ".")
+        : ("No events found yet, scanned back to block " + (reached + 1).toLocaleString() +
+           ". Try \"Scan further back\" or trigger some contract activity.");
+      rescanBtn.disabled = false;
+      moreBtn.disabled = false;
+    }).catch(function (err) {
+      console.error(err);
+      statusEl.textContent = "Could not reach the Monad testnet RPC from this browser (it may be rate-limiting or blocking direct requests). Try the Monadscan link above instead.";
+      rescanBtn.disabled = false;
+      moreBtn.disabled = false;
+    });
+  }
+
+  function scanFurtherBack() {
+    if (scannedFrom === null || scannedFrom <= 0) {
+      statusEl.textContent = "Already scanned back to block 0.";
+      return;
+    }
+    rescanBtn.disabled = true;
+    moreBtn.disabled = true;
+    var startFrom = scannedFrom - 1;
+    statusEl.textContent = "Scanning further back from block " + startFrom.toLocaleString() + "…";
+    scanBackwards(startFrom, 30, function (from, to, count, done, max) {
+      statusEl.textContent = "Scanned down to block " + from.toLocaleString() +
+        " (" + done + "/" + max + " chunks) — " + count + " total event(s) found…";
+    }).then(function (reached) {
+      scannedFrom = reached;
+      statusEl.textContent = "Showing " + Math.min(allDecoded.length, 40) + " of " + allDecoded.length +
+        " event(s), scanned back to block " + (reached + 1).toLocaleString() + ".";
+      rescanBtn.disabled = false;
+      moreBtn.disabled = false;
+    });
+  }
+
+  rescanBtn.addEventListener("click", function () {
+    allDecoded = [];
+    renderEvents();
+    runInitialScan();
+  });
+  moreBtn.addEventListener("click", scanFurtherBack);
+
+  renderBalanceAndBlock();
+  runInitialScan();
+  setInterval(renderBalanceAndBlock, 15000);
+})();
+</script>
+</body>
+</html>
