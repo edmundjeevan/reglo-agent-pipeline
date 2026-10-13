@@ -100,8 +100,9 @@ async function main() {
   console.log(`\nFetching candidate windows from REGLO (real backend, fallback-safe)...`);
   const candidates = await listCandidatesLive(requestHour, 6);
   console.log(`Asking the agent to reason over ${candidates.length} real candidate windows...`);
-  const { chosen, rationale, usedLLM } = await reasonAboutWindows(candidates);
-  console.log(`Decision source: ${usedLLM ? "LLM (Ollama)" : "deterministic fallback"}`);
+  const { chosen, rationale, usedLLM, provider } = await reasonAboutWindows(candidates);
+  const providerLabel = { ollama: "Ollama", kimi: "Kimi", qwen: "Qwen" }[provider] || provider;
+  console.log(`Decision source: ${usedLLM ? `LLM (${providerLabel})` : "deterministic fallback"}`);
   console.log(`Chosen: ${chosen.name} at hour ${chosen.hour} (${chosen.curtailmentRisk}, ${chosen.tariffPencePerKwh}p/kWh)`);
   console.log(`Rationale: ${rationale}`);
 
