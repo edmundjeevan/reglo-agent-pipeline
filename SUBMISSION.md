@@ -5,22 +5,39 @@
 
 ## One-line pitch
 
-An AI agent that gets paid automatically in MON when it verifiably saves
-money by scheduling compute around real solar curtailment data — the
-reasoning, the verification, and the payout all happen on Monad, with no
-human approval step.
+An AI agent earns MON for proving — on-chain, against real grid data —
+that it saved money by timing compute around cheap, curtailed solar power.
 
-## The idea, in three sentences
+## The idea
 
-Running compute (inference, batch jobs, anything deferrable) at the wrong
-time wastes money when cheap, abundant power is available an hour later.
-REGLO already tracks exactly when that happens — solar "curtailment"
-windows, where a UK solar farm is generating more power than the grid can
-use, and electricity is effectively cheapest. This project turns that
-signal into an economic actor: an AI agent that reasons over REGLO's data,
-decides when to defer a job, and gets paid its own share of MON the moment
-an independent oracle confirms the deferral actually saved money — not a
-simulated payout, a real one, settled on Monad testnet.
+REGLO Agent is a self-paying AI agent built for Monad's Physical AI
+Infrastructure track. It schedules deferrable compute jobs into cheap,
+low-curtailment power windows — verified against REGLO, a real
+solar-curtailment monitoring platform (live Aura Power site data:
+Rayleigh, Kemble, Burtree Lane, Grimsby) — and gets paid automatically in
+MON the moment it proves it saved money, with no human in the approval
+loop.
+
+The flow: a user funds an on-chain mandate (`RegloAgentEscrow.sol`) naming
+an agent and a trusted oracle. The agent pulls REGLO's real curtailment
+forecasts, and calls Qwen or Kimi — both verified end-to-end with real
+on-chain payouts — to reason over the candidate windows and pick one,
+falling back to a local Ollama model or a deterministic rule if neither
+API is reachable. Its choice is logged against the deterministic
+cost-optimal pick for transparency. An oracle signs an attestation of
+baseline-vs-actual cost; the contract verifies the signature on-chain and
+pays the agent its share of the verified saving — automatically.
+
+The agent also sells its scheduling advice to other agents over a real
+x402 HTTP flow (402 → on-chain MON payment → verified retry → advice),
+settled directly against the escrow contract since no Monad x402
+facilitator exists yet. A live, self-contained dashboard reads the escrow
+contract directly from the browser, showing the running balance and every
+real event and transaction as it happens.
+
+Everything above is live on Monad testnet today: real contract, real
+REGLO data, real LLM calls (Qwen and Kimi, both verified), real payout and
+x402 transactions — not a mockup.
 
 ## Architecture
 
