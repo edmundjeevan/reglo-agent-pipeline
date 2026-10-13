@@ -115,11 +115,24 @@ today.
 
 Contract: [`0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4`](https://testnet.monadscan.com/address/0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4)
 
-- Full real-data run — real REGLO backend, LLM reasoning, transparency
-  check, oracle-verified payout:
+- Full real-data run — real REGLO backend, **Qwen** LLM reasoning
+  (`REASONING_PROVIDER=qwen`), transparency check, oracle-verified payout:
+  [`0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a`](https://testnet.monadscan.com/tx/0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a)
+- Earlier full real-data run — real REGLO backend, LLM reasoning,
+  transparency check, oracle-verified payout:
   [`0x7e92191c8b8bfbae2905cfa4255ca4d53eef5df147df8580206b2b7e3737cd57`](https://testnet.monadscan.com/tx/0x7e92191c8b8bfbae2905cfa4255ca4d53eef5df147df8580206b2b7e3737cd57)
 - x402 advisory payment — real 402 → on-chain payment → verified retry:
   [`0xda2cfe8f34051e2277c38db5ceafcd80880bd50bbd1e7128aeed3a74832c25e6`](https://testnet.monadscan.com/tx/0xda2cfe8f34051e2277c38db5ceafcd80880bd50bbd1e7128aeed3a74832c25e6)
+
+## Bounty integrations
+
+- **Monad** — the escrow/mandate/payout contract is deployed and live on
+  Monad testnet; every tx linked above is real.
+- **Qwen (Alibaba Cloud DashScope)** — the agent's reasoning provider in
+  `agent/reason.js` (`REASONING_PROVIDER=qwen`), verified end-to-end
+  against real REGLO data with a real on-chain payout (see tx above).
+- **Kimi (Moonshot AI)** — same code path as Qwen (`REASONING_PROVIDER=kimi`),
+  sharing the OpenAI-compatible chat-completions call in `agent/reason.js`.
 
 ## What's real, and what's honestly still a placeholder
 
@@ -137,9 +150,10 @@ Contract: [`0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4`](https://testnet.monadsc
 
 Solidity (OpenZeppelin ECDSA, pinned to v4.9.6 / Shanghai EVM target —
 deliberately conservative since Monad's exact supported fork isn't
-confirmed in public docs), Hardhat 2, ethers.js v6, Node.js, a local Ollama
-LLM, Python/FastAPI for the real REGLO backend, and a hand-built x402
-server/client over plain Node `http`.
+confirmed in public docs), Hardhat 2, ethers.js v6, Node.js, Qwen / Kimi
+(OpenAI-compatible APIs) for agent reasoning with a local Ollama and
+deterministic fallback, Python/FastAPI for the real REGLO backend, and a
+hand-built x402 server/client over plain Node `http`.
 
 ## What's next
 
