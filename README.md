@@ -20,6 +20,8 @@ Monad, with no human approval step.
   [`0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a`](https://testnet.monadscan.com/tx/0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a)
 - **Kimi (Moonshot AI)** — same code path as Qwen (`REASONING_PROVIDER=kimi`),
   sharing the OpenAI-compatible chat-completions call in `agent/reason.js`.
+  Verified end-to-end with a real on-chain payout:
+  [`0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438`](https://testnet.monadscan.com/tx/0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438)
 
 If neither key is configured, or either API is unreachable, the agent
 falls back to a deterministic, documented decision rule rather than

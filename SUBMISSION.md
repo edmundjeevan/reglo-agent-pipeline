@@ -133,6 +133,9 @@ Contract: [`0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4`](https://testnet.monadsc
   against real REGLO data with a real on-chain payout (see tx above).
 - **Kimi (Moonshot AI)** — same code path as Qwen (`REASONING_PROVIDER=kimi`),
   sharing the OpenAI-compatible chat-completions call in `agent/reason.js`.
+  Also verified end-to-end against real REGLO data with a real on-chain
+  payout:
+  [`0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438`](https://testnet.monadscan.com/tx/0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438)
 
 ## What's real, and what's honestly still a placeholder
 
