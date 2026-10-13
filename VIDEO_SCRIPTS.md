@@ -5,9 +5,10 @@ recording. Record the demo first — it's the one that proves the product
 works, and you can lean on what it actually showed when you record the
 pitch right after.
 
-The demo script below is now written against the **exact console output**
-from a real dry run on Monad testnet (12 Oct 2026), so what you read on
-screen should match what you see almost line for line.
+The demo script below is now written against the **best verified run** on
+Monad testnet (13 Oct 2026) — real REGLO data, real Qwen reasoning, and a
+real on-chain payout, all in one — so what you read on screen should match
+what you see almost line for line.
 
 ---
 
@@ -22,15 +23,13 @@ or another video host.
 2. Your dashboard: `https://edmundjeevan.github.io/reglo-agent-pipeline/`
 3. Monadscan, pinned to the contract: `https://testnet.monadscan.com/address/0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4`
 
-**Optional but worth it — get real REGLO data on screen:** in a separate
-terminal tab, start REGLO (`cd ~/Downloads/reglo_backend && uvicorn
-app.main:app --reload --port 8000`), confirm with `curl
-http://localhost:8000/api/health`, then run the demo command with
-`REGLO_API_URL=http://127.0.0.1:8000` instead of the default — Node's
-`fetch` sometimes can't reach `localhost` over IPv6 even when `curl`
-can, and `127.0.0.1` sidesteps that. If you'd rather not deal with this
-mid-recording, skip REGLO entirely — the fallback is real, honest, and
-documented, and the chain transaction is identical either way.
+**Start REGLO first, in a separate terminal tab** (leave it running):
+```
+cd ~/Downloads/reglo_backend
+uvicorn app.main:app --reload --port 8000
+```
+Confirm it's up with `curl http://localhost:8000/api/health` before you
+start recording.
 
 **0:00–0:20 — What you're about to see**
 Voiceover, over the dashboard page:
@@ -43,17 +42,17 @@ Voiceover, over the dashboard page:
 Point at the contract address and balance on the dashboard.
 
 **0:20–1:50 — Run the real flow**
-Switch to the terminal. Run:
+Switch to the terminal. Run (REGLO running, real Qwen key set):
 
 ```
-ESCROW_ADDRESS=0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4 npx hardhat run scripts/live-demo.js --no-compile --network monadTestnet
+REGLO_API_URL=http://localhost:8000 DASHSCOPE_API_KEY=your-key REASONING_PROVIDER=qwen ESCROW_ADDRESS=0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4 npx hardhat run scripts/live-demo.js --no-compile --network monadTestnet
 ```
 
-(Prefix with `REGLO_API_URL=http://127.0.0.1:8000` first if you got REGLO
-running — see above.)
-
-Here's what prints, in order — narrate each block as it appears rather
-than reading your own script, so it feels live (because it is):
+This is the verified best-case run. Here's exactly what printed last time
+— narrate each block as it lands rather than reading your own script, so
+it feels live (because it is). Your exact numbers (site, hour, saving,
+tx hash) will differ on your take since REGLO's real data changes — just
+narrate whatever actually prints, not these specific figures.
 
 ```
 User (you):    0x7B21BD1b28c84A69141dE40777d297b456795D17
@@ -67,40 +66,40 @@ Fetching candidate windows from REGLO (real backend, fallback-safe)...
 > an oracle that independently verifies the agent's work. The mandate
 > funding already happened in an earlier run, so it's reusing it."
 
-Next block — this is either real REGLO data or the honest fallback,
-depending on whether you got `uvicorn` running:
 ```
-[agent/reglo-live.js] REGLO backend unreachable at http://localhost:8000 (fetch failed) -- using agent/reglo-mock.js synthetic fallback...
+[agent/reglo-live.js] REGLO backend is up at http://localhost:8000 -- using real data for this run.
 ```
-or, if REGLO answered:
-```
-[agent/reglo-live.js] REGLO backend is up at http://127.0.0.1:8000 -- using real data for this run.
-```
-> "It's reading curtailment and tariff windows [from my real REGLO
-> backend / from the documented synthetic fallback, since REGLO isn't
-> running right now] — either way, this next decision is made over that
-> data, honestly, not scripted."
+> "It's reading curtailment and tariff windows live, straight from my
+> real REGLO backend, right now."
 
-Then:
 ```
 Asking the agent to reason over 28 real candidate windows...
-Decision source: deterministic fallback
-Chosen: Grimsby at hour 11 (CRITICAL, 6p/kWh)
-Rationale: (fallback: picked lowest tariff, LLM unavailable)
-Transparency check: this IS the deterministic optimum (130p saved on 10kWh).
+Decision source: LLM (Qwen)
+Chosen: Rayleigh at hour 13 (LOW, 25p/kWh)
+Rationale: It has the lowest electricity price among the available windows while all options carry the same low curtailment risk.
+Transparency check: this IS the deterministic optimum (30p saved on 10kWh).
 ```
-> "It picked the Grimsby site at hour 11 — the highest curtailment risk,
-> cheapest tariff window. The 'transparency check' line is the agent
-> grading its own homework: it's independently confirming this actually
-> was the best available option, not just a plausible-sounding one."
+> "That decision was made by Qwen, Alibaba Cloud's model, called live over
+> their API — it picked the Rayleigh site at hour 13, the cheapest tariff
+> window available. The 'transparency check' line is the agent grading
+> its own homework: it's independently confirming this really was the
+> best available option, not just a plausible-sounding one."
 
 Then the payout:
 ```
-Verified saving (REGLO's real curtailment data, independent of the LLM's wording): 0.013 MON-equivalent
-Payout claimed. Tx: 0xdf0f13233cd3c79753f1da8955b89993e642ca49e2734668632b3ddadcfe053d
-Check it on https://testnet.monadscan.com/tx/0xdf0f...
+Verified saving (REGLO's real curtailment data, independent of the LLM's wording): 0.003 MON-equivalent
+Payout claimed. Tx: 0x546ac9b63ce72f00467e8e2c25f1d3c8186a0cdacfa0806019fa3639cb929bda
+Check it on https://testnet.monadscan.com/tx/0x546ac...
 ```
 > "And that's the payout — settled on-chain, right now, in MON."
+
+**If REGLO or the Qwen key aren't available when you actually record,**
+fall back to the simpler command without those two env vars — the script
+still completes honestly on the documented fallback, just say so on
+camera rather than pretending otherwise:
+```
+ESCROW_ADDRESS=0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4 npx hardhat run scripts/live-demo.js --no-compile --network monadTestnet
+```
 
 **1:50–2:30 — Prove it on-chain**
 Switch to the Monadscan tab, paste in the tx hash just printed, show
@@ -112,9 +111,10 @@ transaction.
 > page, live, right now. Nothing on this dashboard is mocked."
 
 **2:30–2:50 — One honest caveat, fast**
-> "The payment rail, the escrow logic, and — when REGLO's running — the
-> curtailment data are all real. What I've simplified for the hackathon
-> window is documented plainly in the README. Nothing here is hidden."
+> "The payment rail, the escrow logic, the REGLO curtailment data, and
+> this decision from Qwen are all real. What I've simplified for the
+> hackathon window is documented plainly in the README. Nothing here is
+> hidden."
 
 **2:50–3:00 — Close**
 > "REGLO: an agent that gets paid for real, verified, power-aware work —
