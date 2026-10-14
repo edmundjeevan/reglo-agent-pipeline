@@ -18,6 +18,7 @@ Monad, with no human approval step.
   as the agent's reasoning provider (`REASONING_PROVIDER=qwen`). Verified
   end-to-end against real REGLO data, with a real on-chain payout:
   [`0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a`](https://testnet.monadscan.com/tx/0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a)
+  Writeup: [How Qwen Powers REGLO Agent's On-Chain Decisions](https://dev.to/edmundjeevan/how-qwen-powers-reglo-agents-on-chain-decisions-2ngh)
 - **Kimi (Moonshot AI)** — same code path as Qwen (`REASONING_PROVIDER=kimi`),
   sharing the OpenAI-compatible chat-completions call in `agent/reason.js`.
   Verified end-to-end with a real on-chain payout:

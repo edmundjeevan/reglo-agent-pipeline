@@ -135,6 +135,7 @@ Contract: [`0xfDB3B28a35a6E9f4A73166086480f0726E1aB1C4`](https://testnet.monadsc
 - Full real-data run — real REGLO backend, **Qwen** LLM reasoning
   (`REASONING_PROVIDER=qwen`), transparency check, oracle-verified payout:
   [`0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a`](https://testnet.monadscan.com/tx/0x666c6090caba0282d6b96c148c6206cd0778635eb2f2131e0a063ee77c99b09a)
+  Writeup: [How Qwen Powers REGLO Agent's On-Chain Decisions](https://dev.to/edmundjeevan/how-qwen-powers-reglo-agents-on-chain-decisions-2ngh)
 - Earlier full real-data run — real REGLO backend, LLM reasoning,
   transparency check, oracle-verified payout:
   [`0x7e92191c8b8bfbae2905cfa4255ca4d53eef5df147df8580206b2b7e3737cd57`](https://testnet.monadscan.com/tx/0x7e92191c8b8bfbae2905cfa4255ca4d53eef5df147df8580206b2b7e3737cd57)
