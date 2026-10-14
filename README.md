@@ -22,6 +22,7 @@ Monad, with no human approval step.
   sharing the OpenAI-compatible chat-completions call in `agent/reason.js`.
   Verified end-to-end with a real on-chain payout:
   [`0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438`](https://testnet.monadscan.com/tx/0xcc5f99ebfccb2a9128a102984f5ddde4d22d67c9b4268bc9b42201e058b8e438)
+  Writeup: [How Kimi Powers REGLO Agent's On-Chain Decisions](https://dev.to/edmundjeevan/how-kimi-powers-reglo-agents-on-chain-decisions-3cne)
 
 If neither key is configured, or either API is unreachable, the agent
 falls back to a deterministic, documented decision rule rather than
